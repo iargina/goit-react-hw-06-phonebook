@@ -1,19 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { ContactForm } from './ContactForm/ContactForm';
 import { Filter } from './Filter/Filter';
 import { ContactList } from './ContactList/ContactList';
 import { nanoid } from 'nanoid';
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { getContacts } from 'redux/selectors';
+import { addContact, deleteContact } from 'redux/contactsSlice';
+import { setFilter } from 'redux/filterSlice';
 
 export const App = () => {
-  const [contacts, setContacts] = useState(
-    () => JSON.parse(localStorage.getItem('contacts')) ?? []
-  );
-  const [filter, setFilter] = useState('');
+  const contacts = useSelector(getContacts);
 
+  const dispatch = useDispatch();
   const deleteClient = id => {
-    const newClients = contacts.filter(el => el.id !== id);
-    return setContacts(newClients);
+    dispatch(deleteContact(id));
+    return;
   };
+
   useEffect(() => {
     localStorage.setItem('contacts', JSON.stringify(contacts));
   }, [contacts]);
@@ -27,17 +31,11 @@ export const App = () => {
       return;
     }
     const newClient = { id: nanoid(), ...client };
-    setContacts([newClient, ...contacts]);
-  };
-
-  const filterContact = () => {
-    return contacts.filter(el =>
-      el.name.toLowerCase().includes(filter.toLowerCase())
-    );
+    dispatch(addContact(newClient));
   };
 
   const renderOnChange = ev => {
-    return setFilter(ev.currentTarget.value);
+    return dispatch(setFilter(ev.currentTarget.value));
   };
 
   return (
@@ -56,12 +54,8 @@ export const App = () => {
       <h2 className="contactListTitle">Contacts</h2>
       {contacts.length > 0 ? (
         <>
-          <Filter renderOnChange={renderOnChange} stateFilter={filter} />
-          <ContactList
-            stateFilter={filter}
-            deleteClient={deleteClient}
-            contacts={filterContact()}
-          />
+          <Filter renderOnChange={renderOnChange} />
+          <ContactList deleteClient={deleteClient} />
         </>
       ) : (
         <p>Your have no contacts in your phone book</p>

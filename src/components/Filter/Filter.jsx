@@ -1,22 +1,19 @@
 import React from 'react';
 import css from './Filter.module.css';
-import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
+import { getFilter } from 'redux/selectors';
 
-export const Filter = ({ stateFilter, renderOnChange }) => {
+export const Filter = ({ renderOnChange }) => {
+  const filter = useSelector(getFilter);
   return (
     <>
       <input
         type="text"
         name="filter"
         className={css.input}
-        value={stateFilter}
+        value={filter}
         onChange={renderOnChange}
       />
     </>
   );
-};
-
-Filter.propTypes = {
-  stateFilter: PropTypes.string,
-  renderOnChange: PropTypes.func.isRequired,
 };

@@ -1,11 +1,17 @@
 import React from 'react';
 import css from './ContactList.module.css';
-import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
+import { getContacts, getFilter } from 'redux/selectors';
 
-export const ContactList = ({ contacts, deleteClient }) => {
+export const ContactList = ({ deleteClient }) => {
+  const contacts = useSelector(getContacts);
+  const filter = useSelector(getFilter);
+  const visibleContacts = contacts.filter(client =>
+    client.name.toLowerCase().includes(filter)
+  );
   return (
     <ul className={css.list}>
-      {contacts.map(el => {
+      {visibleContacts.map(el => {
         return (
           <li key={el.id} className={css.listItem}>
             {el.name}: {el.number}
@@ -21,14 +27,4 @@ export const ContactList = ({ contacts, deleteClient }) => {
       })}
     </ul>
   );
-};
-
-ContactList.propTypes = {
-  stateFilter: PropTypes.string,
-  contacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    }).isRequired
-  ).isRequired,
 };
