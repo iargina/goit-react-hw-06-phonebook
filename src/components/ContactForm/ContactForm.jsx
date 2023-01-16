@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
 import css from './ContactForm.module.css';
 import PropTypes from 'prop-types';
+import { getContacts } from 'redux/selectors';
+import { addContact } from 'redux/contactsSlice';
+import { useSelector } from 'react-redux';
+import { nanoid } from 'nanoid';
+import { useDispatch } from 'react-redux';
 
-export const ContactForm = ({ pushToContact }) => {
+export const ContactForm = () => {
   const [clientName, setName] = useState('');
   const [clientNumber, setNumber] = useState('');
+
+  const contacts = useSelector(getContacts);
+  const dispatch = useDispatch();
 
   const handleChange = ev => {
     switch (ev.currentTarget.name) {
@@ -25,7 +33,16 @@ export const ContactForm = ({ pushToContact }) => {
       name: clientName,
       number: clientNumber,
     };
-    pushToContact(client);
+
+    const result = contacts.items.find(
+      el => el.name.toLowerCase() === client.name.toLowerCase()
+    );
+    if (result) {
+      alert(`${client.name} is already in your contact list`);
+      return;
+    }
+    const newClient = { id: nanoid(), ...client };
+    dispatch(addContact(newClient));
     setNumber('');
     setName('');
     return;
