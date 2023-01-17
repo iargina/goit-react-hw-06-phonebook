@@ -10,7 +10,7 @@ export const ContactList = () => {
   const filter = useSelector(getFilter);
   const dispatch = useDispatch();
 
-  const visibleContacts = contacts.items.filter(client =>
+  const visibleContacts = contacts.filter(client =>
     client.name.toLowerCase().includes(filter)
   );
   return (

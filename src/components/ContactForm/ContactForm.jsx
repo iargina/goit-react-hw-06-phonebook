@@ -34,7 +34,7 @@ export const ContactForm = () => {
       number: clientNumber,
     };
 
-    const result = contacts.items.find(
+    const result = contacts.find(
       el => el.name.toLowerCase() === client.name.toLowerCase()
     );
     if (result) {
